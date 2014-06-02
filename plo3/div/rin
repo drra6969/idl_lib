@@ -1,0 +1,6 @@
+        integer     nx,ny,nz,nv
+	parameter  (nx = 45, ny = 61, nz = 33)
+	parameter  (nv = nx*ny)
+
+        real        help(nv,nz)
+        common  /  hfeld  /  help

@@ -1,0 +1,47 @@
+altitude   ?
+msis.f			msis atmosphere fortran
+msis.pro		msis atmosphere idl
+
+chapman.pro		chapman function
+solar_ion.pro		ionization mechanisms
+tear.pro		tearing growth rate
+
+conew.pro		2D mhd plotting
+
+conio.pro		2D iono plotting
+conios.pro		similar to conio includes grad pe and conductivities
+
+contplot.pro		contour plotting subroutine
+vplot.pro		arrow plotting subroutine
+image.pro		image subroutine used in plotit*		
+load_mycolor.pro	color table subroutine in plotit*
+log_label.pro		subroutine
+newgrid.pro		subroutine to generate vel grid->cut3p(inconsistent?)
+pcont.pro		contour plotting -> cut3p
+pot.pro			subroutine to determin potential
+strno.pro		some string operation
+norm.pro		altitude normalization
+testbd3.pro		boundary test subroutine
+vect.pro		draw arrows
+
+cut3p.pro		cuts through 3D MHD
+
+plo1diot.pro		extensive 1D plotting (cuts)
+plo1dt.pro		1D plotting (cuts) with conductivity and Ohms law.
+
+plo1dmul1.pro		multiple 1D plots
+plo1dmul.pro		multiple 1D plots
+plo1ds.pro		multiple 1D plots (conductivity, newer version)
+
+plotit1.pro		image plots
+plotit3.pro
+plotit.pro
+
+readmecolor		How to deal with plotit
+readme			this file
+
+tgrow.pro		plot something from magdgrow
+vplot.pro
+
+
+subpro

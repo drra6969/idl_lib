@@ -1,0 +1,3 @@
+device,decomposed=0
+window,/PIXMAP & wdelete
+DEVICE, BYPASS_TRANSLATION=0

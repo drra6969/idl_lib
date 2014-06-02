@@ -1,0 +1,12 @@
+common glob_g,  achs_min1,achs_max1,achs_min2,achs_max2,g_feld,$
+		achs_kom1,achse1_g,achse2_g,g_plot_g,$
+		achs_kom2,titel_kom,norm_koord,groesse,snx,sny,snz,$
+	        ax_n,az_n,nlev_n,iz_n,ix_n,iy_n,x,y,z,rhon,bx,by,bz,un,$
+		nx,ny,nz,nzzz,nv,ischritt,iaus,g_feld1,nu12s,nu21s,$
+	        zeit,res,grav,whichfile,achse1,achse2,g_plot_g1,$
+		difx,dify,difz,ddifx,ddify,ddifz,g_plot,g_plot1,$
+                xmin,xmax,ymin,ymax,zmin,zmax,nxneu
+common glob_neu, zrange,ddifpx,ddifmx,ddifpy,ddifmy,ddifpz,ddifmz,$
+                 meanpx,meanmx,meanpy,meanmy,meanpz,meanmz,gamma,dt,$
+                 g_pmin, g_pmax,plowahl, printfile, afile, bfile, cfile,$
+                 altertitel, gittschon,x1alt,x2alt,y1alt,y2alt

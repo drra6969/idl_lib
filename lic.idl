@@ -1,0 +1,3 @@
+SERVER flare 08002b24320f 1700
+DAEMON idl_lmgrd /home/idl/bin
+FEATURE idl idl_lmgrd 1.000 1-jan-00 60 5B96F0913A964F5A4D72 "2207Space Plasma Physics Group, Geophysical Institute, UAF" 08002b24320f

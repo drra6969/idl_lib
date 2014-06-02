@@ -1,0 +1,60 @@
+Programs to plot field lines or flux surfaces. In detail the programs 
+perform the following tasks:
+
+  vflux.pro
+    Program to show flux surfaces. The scalar field which represents the 
+    flux surface is actually computed in flflux. The method is slow 
+    compared to computation of flux surfaces by a fortran code. The 
+    program uses the idl SLICER or the SLOWN or the PLOT3D subroutine to 
+    represent the calculated flux surface. (-> vslice.pro)
+  vline.pro
+    Program to compute and show field lines. Field lines are calculated 
+    in the subroutine flines. The 3D transformation and the 3D box is 
+    determined in boxy.pro
+  vlinearc.pro
+    Same as vline except that the projection is given by box1.pro for 
+    the geometry of auroral arcs.
+  vslice.pro
+    Program to show flux surfaces. Scalar fields which represent the 
+    flux surfaces is mflux** (unformatted). The method is fast 
+    compared to vflux.pro. The Input data actually contains only the 
+    dimension and the indices of the nonzero elements of the field which 
+    makes the method efficient with respect to the amount of data. The 
+    program uses the idl SLICER or the SLOWN or the PLOT3D (in t3d) subroutine 
+      to represent the calculated flux surface.
+    
+Subroutines which are used in the programs are in the directory 
+ 
+ ~/idl_lib/routines and perform the following tasks: 
+
+  boxy.pro
+    Plots a box and determines the three-dimensional transformation to
+    plot field lines.
+  boxy.pro
+    Plots a box and determines the three-dimensional transformation to
+    plot field lines for the arc geometry.
+  draw.pro
+    Subroutine to draw a field line which is dashed for x<0
+  flflux.pro
+    Subroutine to compute the flux surface on a scalar field by
+    integrating a set of field lines from an original plane and 
+    distributing a value of unity across neighboring gridpoints for each 
+    integration step.
+  flines.pro
+    Subroutine to compute field lines for a given vector field. Care is 
+    suggested for boundary conditions, particularly at z=0.
+  projx.pro
+    Projection of field lines on the plane x=xval
+  projy.pro
+    Projection of field lines on the plane y=yval
+  projz.pro
+    Projection of field lines on the plane z=zval
+  scrosst.pro
+    Subroutine to determine n equidistant start locations on a 
+    cross centered at center (actually for 2n field lines). 
+    A second set of start locations can be selected with 
+    a seperation of eps from the first set if eps <> 0.
+  sline.pro
+    Subroutine to determine n equidistant start locations between
+    s1 and s2. A second set of start location can be selected with 
+    a seperation of eps from the first set if eps <> 0.

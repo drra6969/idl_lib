@@ -1,0 +1,382 @@
+; This program finds the maximum, intermediate, and minimum variance direc-
+; tions for the electric field from a satellite data set.  It plots these
+; as hodograms and gives the angles between the eigenvectors and the LMN axes,
+; XYZ axes, and the solar wind magnetic field.  The program also finds the 
+; deHoffmann-Teller velocity, checks the Walen relation, and finds the quality
+; ratio.
+ 
+
+; Variable initialization
+s = fltarr(251,5,3) & B=s & v=s & Efld=s 
+q=fltarr(3,3) & term=q & term1=q & term2=q & M=q & Msave1=q 
+evec=fltarr(3,3) & rad=fltarr(3,3) & deg=fltarr(3,3)    
+etot=fltarr(5,3)					      
+plot = '' & again='y' & withps='n' & angles='y' & return='' & w=''
+u = fltarr(3) & zcomp=u & ycomp=u & ez=u & ey=u & theta=u & zang=u & yang=u
+evB = u & prevector=u & vector=u & zdeg=u & ydeg=u
+a = fltarr(3) & d=a & e=a & eval=a & Kv0=a & vht=a & neg=a
+r = fltarr(3,251) & proj0=r & proj1=r &proj2=r & add=r
+g = fltarr(3,3) & K00=g & prematrix=g & matrix = g & K0=g
+intdir = 0 & numer=0. & denom=0. 
+bgraph = fltarr(251,3) & vgraph=fltarr(251,3)
+lfit = fltarr(2) & yf=fltarr(251)
+aa = fltarr(251) & xprod0=aa & xprod1=aa & xprod2=aa & c0=aa & c1=aa & c2=aa
+
+time = fltarr(501)
+p = fltarr(501,5) & bl=p & bm=p & bn=p & vl=p & vm=p & vn=p & rho=p & ptot=p 
+fnumber=1                 & b2=p
+dumm7=strarr(7)
+dumm=''
+xsat=fltarr(5) & zsat=xsat & bl1=xsat & bm1=xsat & bn1=xsat
+;------------------------------------------------------------------------------
+; Reading data file
+
+print, 'What filenumber?'
+read, num
+openr,num,'sat'+string(num,'(i1)')
+readf,num,format='(a55,f9.4)',dumm,philm
+readf,num,format='(a80)',dumm
+readf,num,format='(a80)',dumm
+for i=0,4 do begin
+  readf, num, format='(a7,f7.2,a3,f7.2)',dumm,xs,dumm,ys
+  xsat(i)=xs & zsat(i)=ys
+endfor
+readf,num,dumm7
+
+i=0
+while not eof(num) do begin
+  for k=0,4 do begin
+    readf, num, times,bls,bms,bns,vls,vms,vns,rhos,ps,bs,ptots 
+    time(i)=times & bl(i,k)=bls & bm(i,k)=bms & bn(i,k)=bns
+    vl(i,k)=vls & vm(i,k)=vms & vn(i,k)=vns
+    rho(i,k)=rhos & p(i,k)=ps & b2(i,k)=bs*bs & ptot(i,k)=ptots
+  endfor
+  itot=i
+  if i lt 499 then i=i+1 else stop, 'Too many records.'
+endwhile
+close, num
+;------------------------------------------------------------------------------
+;Creating postscript file
+
+print, 'With postscript?'
+read, withps
+if withps eq 'y' then begin
+  set_plot, 'ps'
+  device, filename='efield.ps'
+  device, /inches, xsize=8., scale_factor=1.0, xoffset=0.5
+  device, /inches, ysize=4., scale_factor=1.0, yoffset=0.5
+  device, /landscape, /times, /bold, font_index=3
+endif
+;------------------------------------------------------------------------------
+; Variance matrix
+
+B(*,*,0)=bl(0:250,*) & B(*,*,1)=bm(0:250,*) & B(*,*,2)=bn(0:250,*)
+V(*,*,0)=vl(0:250,*) & V(*,*,1)=vm(0:250,*) & V(*,*,2)=vn(0:250,*)
+for i=0,250 do $
+  for n=0,4 do $
+    for k=0,2 do begin
+      k1=(k+1) mod 3 & k2=(k+2) mod 3      
+      if k1 lt k2 then Efld(i,n,k)=V(i,n,k1)*B(i,n,k2)-V(i,n,k2)*B(i,n,k1)
+      if k1 gt k2 then Efld(i,n,k)=-V(i,n,k1)*B(i,n,k2)+V(i,n,k2)*B(i,n,k1)
+endfor
+
+while again eq 'y' do begin
+term1=fltarr(3,3)
+vector=fltarr(3) & matrix=fltarr(3,3)
+print, 'Enter satellite position (0-4)'
+read, pos
+print, 'Enter component of E to plot'
+read, plot
+if (plot eq 'l' or plot eq 'x') then i=0
+if (plot eq 'm' or plot eq 'y') then i=1
+if (plot eq 'n' or plot eq 'z') then i=2
+if (plot eq 'a') then begin
+  set_plot, 'tek'
+  !p.multi=[0,0,3]
+  for ii=0,2 do plot, Efld(*,pos,ii)
+  !p.multi=[0,2,1,0,0]
+endif else begin
+  set_plot, 'tek'
+  plot, Efld(*,pos,i)
+endelse
+print, 'Enter lower time range limit'
+read, ibeg
+print, 'Upper range limit'
+read, iend
+if withps eq 'y' then set_plot, 'ps'
+plot, B(ibeg:iend,pos,0), line=0, ytitle='Magnetic field'
+oplot, B(ibeg:iend,pos,1), line=1 & oplot, B(ibeg:iend,pos,2), line=2
+plot, V(ibeg:iend,pos,0), line=0, ytitle='Velocity'
+oplot, V(ibeg:iend,pos,1), line=1 & oplot, V(ibeg:iend,pos,2), line=2
+plot, Efld(ibeg:iend,pos,0), line=0, ytitle='Electric field'
+oplot, Efld(ibeg:iend,pos,1), line=1 & oplot, Efld(ibeg:iend,pos,2), line=2
+ndata = iend - ibeg + 1
+variance, ibeg, iend, ndata, Efld
+EM=M
+;------------------------------------------------------------------------------
+; Find eigenvectors & eigenvalues
+
+Msave1=M
+tred2, M,d,e
+tqli, d,e,M
+eval=d
+mx=max(d,i) & maxdir=i
+mn=min(d,i) & mindir=i
+if (d(0) lt mx and d(0) gt mn) then int=d(0)
+if (d(1) lt mx and d(1) gt mn) then int=d(1)
+if (d(2) lt mx and d(2) gt mn) then int=d(2)  
+evec=M
+;------------------------------------------------------------------------------
+; Hodograms
+
+for i=ibeg, iend do $
+  for k=0,2 do begin
+    proj0(k,i)=Efld(i,pos,0)*evec(0,k)
+    proj1(k,i)=Efld(i,pos,1)*evec(1,k)
+    proj2(k,i)=Efld(i,pos,2)*evec(2,k)
+    add(k,i)=proj0(k,i)+proj1(k,i)+proj2(k,i)
+    test=evec(0,mindir)*B(0,pos,0) + evec(1,mindir)*B(0,pos,1) + $
+      evec(2,mindir)*B(0,pos,2)
+    neg=(-1)*evec(*,mindir)
+    negtest=neg(0)*B(0,pos,0) + neg(1)*B(0,pos,1) + neg(2)*B(0,pos,2)
+endfor
+print, test, negtest
+
+print, 'Press return for max/intermediate & max/min plots'
+read, return
+!p.multi=[0,2,1,0,0]
+for i=0,2 do begin
+  if (maxdir eq i or mindir eq i) then intdir = (i+1) mod 3
+  if (intdir eq maxdir or intdir eq mindir) then intdir = (i+2) mod 3
+endfor 
+low1=min(add(mindir,ibeg:iend))
+high1=max(add(mindir,ibeg:iend))
+low2=min(add(intdir,ibeg:iend))
+high2=max(add(intdir,ibeg:iend))
+lowmax=min(add(maxdir,ibeg:iend))
+highmax=max(add(maxdir,ibeg:iend))
+diffmax=(highmax-lowmax)/2
+avg1=(high1-low1)/2 + low1
+avg2=(high2-low2)/2 + low2
+top1=avg1+diffmax & bot1=avg1-diffmax
+top2=avg2+diffmax & bot2=avg2-diffmax
+plot, add(intdir,ibeg:iend), add(maxdir,ibeg:iend), xrange=[bot2,top2], psym=1 
+oplot, add(intdir,ibeg:iend), add(maxdir,ibeg:iend), xrange=[bot2,top2], $
+  xtitle='E int', ytitle='E max'
+xyouts, [add(intdir,ibeg), add(intdir,iend)], [add(maxdir,ibeg), $
+  add(maxdir,iend)], ['t=0', 't=final']
+plot, add(mindir,ibeg:iend), add(maxdir,ibeg:iend), xrange=[bot1,top1], psym=1
+oplot, add(mindir,ibeg:iend), add(maxdir,ibeg:iend), xrange=[bot1,top1], $
+  xtitle='E min', ytitle='E max'
+xyouts, [add(mindir,ibeg), add(mindir,iend)], [add(maxdir,ibeg), $
+  add(maxdir,iend)], ['t=0', 't=final']
+!P.multi=[0,1,1,0,0]
+;------------------------------------------------------------------------------
+; Eigenvector angles from LMN, XYZ, solar wind magnetic field
+
+print, 'Print angle of eigenvectors from L,M,N & X,Y,Z axes' 
+print, 'and the deHoffmann-Teller velocity?'
+read, angles
+
+if angles eq 'y' then begin
+  phideg=(180*philm)/!pi
+  Bwind=(bl(0,pos)^2 + bm(0,pos)^2 + bn(0,pos)^2)^0.5
+  if (bl(0,pos) ge 0. and bm(0,pos) ge 0.) then swdir=90 - $
+    (180*Acos(bm(0,pos)/Bwind)/!pi)
+  if (bl(0,pos) lt 0. and bm(0,pos) gt 0.) then swdir=90 + $
+    (180*Acos(bm(0,pos)/Bwind)/!pi)
+  if (bl(0,pos) le 0. and bm(0,pos) le 0.) then swdir=-(180*Acos(bm(0,pos)/ $
+    Bwind)/!pi)
+  if (bl(0,pos) gt 0. and bm(0,pos) lt 0.) then swdir=-90 + $
+    (180*Acos(bm(0,pos)/Bwind)/!pi)
+
+  for k=0,2 do begin
+    if (evec(1,k) ge 0.) then rad(0,k)=Acos(evec(0,k))
+    if (evec(1,k) lt 0.) then rad(0,k)=-Acos(evec(0,k))
+    if (evec(2,k) ge 0.) then rad(1,k)=Acos(evec(1,k))
+    if (evec(2,k) lt 0.) then rad(1,k)=-Acos(evec(1,k))      
+    if (evec(0,k) ge 0.) then rad(2,k)=Acos(evec(2,k))
+    if (evec(0,k) lt 0.) then rad(2,k)=-Acos(evec(2,k))      
+    deg=(180.*rad)/!Pi
+
+    if (bm(0,pos) gt 0.) then begin      
+      if (evec(0,k) gt 0. and evec(1,k) gt 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        zang(k)=theta(k) + philm
+        yang(k)=theta(k) + philm + (!pi/2)
+      endif
+      if (evec(0,k) gt 0. and evec(1,k) lt 0.) then begin
+        theta(k)=!pi + Atan(evec(1,k)/evec(0,k))
+        if (rad(0,k) lt philm) then begin
+          zang(k)=philm - theta(k)
+          yang(k)=philm - theta(k) + (!pi/2)
+        endif else begin
+          zang(k)=theta(k) - philm
+          yang(k)=(!pi/2) - theta(k) - philm
+        endelse
+      endif
+      if (evec(0,k) lt 0. and evec(1,k) lt 0.) then begin
+        theta(k)=!pi + Atan(evec(1,k)/evec(0,k))
+        if (rad(0,k) gt (philm + (!pi/2))) then begin
+          zang(k)=theta(k) - philm
+          yang(k)=theta(k) - philm - (!pi/2)
+        endif else begin
+          zang(k)=theta(k) - philm
+          yang(k)=philm + (!pi/2) - theta(k)
+        endelse
+      endif
+      if (evec(0,k) lt 0. and evec(1,k) gt 0.) then begin
+        theta(k)=2*!pi + Atan(evec(1,k)/evec(0,k))
+        zang(k)=theta(k) + philm
+        yang(k)=theta(k) + philm + (!pi/2)
+      endif
+      zdeg(k)=180*(zang(k)/!pi)
+      ydeg(k)=180*(yang(k)/!pi)
+      evB(k)=swdir - theta(k)
+    endif
+
+    if (bm(0,pos) lt 0.) then begin      
+      zcomp(k)=cos(philm)*evec(0,k) - sin(philm)*evec(1,k)
+      ycomp(k)=sin(philm)*evec(0,k) - cos (philm)*evec(1,k)
+      if (evec(0,k) ge 0. and evec(1,k) ge 0.) then begin
+        print, 'a'
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le philm) then begin 
+          zang(k)=-(Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) lt 0. and evec(1,k) gt 0.) then begin
+        print, 'b'
+        theta(k)=!pi + Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (!pi/2 + philm)) then begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) le 0. and evec(1,k) le 0.) then begin
+        print, 'c'
+        theta(k)=-!pi + Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (-!pi + philm)) then begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(-Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) gt 0. and evec(1,k) lt 0.) then begin
+        print, 'd'
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (-!pi/2 + philm)) then begin
+          zang(k)=(-Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(-Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      evB(k)=swdir - theta(k)
+    endif
+  endfor
+
+  print, 'Maximum eigenvector (eigenvalue = ', mx, ') makes an angle of '
+  print, deg(0,maxdir), deg(1,maxdir), deg(2,maxdir), '  degrees'
+  print, deg(2,maxdir), yang(maxdir), zang(maxdir), '  degrees'
+  print, 'Intermediate eigenvector (eigenvalue = ', int, ') makes an angle of '
+  print, deg(0,intdir), deg(1,intdir), deg(2,intdir), '  degrees'
+  print, deg(2,intdir), yang(intdir), zang(intdir), '  degrees'
+  print, 'Minimum eigenvector (eigenvalue = ', mn, ') makes an angle of '
+  print, deg(0,mindir), deg(1,mindir), deg(2,mindir), '  degrees'
+  print, deg(2,mindir), yang(mindir), zang(mindir), '  degrees'
+  print, 'with the L,M,N & X,Y,Z axes respectively.'
+  print, 'Solar wind magnetic field makes an angle of '
+  print, evB(maxdir),evB(intdir),evB(mindir), '  degrees'
+  print, 'with the maximum, intermediate, and minimum eigenvectors', $
+    ' respectively.'
+;------------------------------------------------------------------------------
+; deHoffmann-Teller velocity
+
+  for k=0,2 do $
+    for n=0,2 do $
+      for j=ibeg,iend do begin
+        if k eq n then prematrix(k,n)=(B(j,pos,0)^2 + B(j,pos,1)^2 + $
+          B(j,pos,2)^2) - B(j,pos,k)^2
+        if k eq n then prevector(k)=(B(j,pos,0)^2 + B(j,pos,1)^2 + $
+          B(j,pos,2)^2)*V(j,pos,n) - B(j,pos,k)*B(j,pos,n)*V(j,pos,n)
+        if k ne n then prematrix(k,n)=-B(j,pos,k)*B(j,pos,n)
+        if k ne n then prevector(k)=-B(j,pos,k)*B(j,pos,n)*V(j,pos,n)
+        matrix(k,n)=prematrix(k,n) + matrix(k,n)
+        vector(k)=prevector(k) + vector(k)
+  endfor      
+  K0=(1./ndata)*matrix
+  Kv0=(1./ndata)*vector
+  K00=invert(K0, status0)
+  vht=K00#Kv0
+  print, 'deHoffmann-Teller velocity components (L,M,N):' 
+  print, vht
+  print, 'Maximum, intermediate, and minimum eigenvectors:'
+  print, evec(*,maxdir), evec(*,intdir), evec(*,mindir)
+  print, 'min eval =', mn
+  print, 'max eval/int eval = ', mx/int
+endif
+;------------------------------------------------------------------------------
+; Walen relation
+
+print, 'Plot to test Walen relation?'
+read, w
+if (w eq 'y') then begin
+  vgraph=fltarr(251,3) & bgraph=fltarr(251,3)
+  for j=0,2 do $
+    for i=ibeg,iend do begin
+      alpha=0.
+      vgraph(i,j)=V(i,pos,j) - vht(j)
+      bgraph(i,j)=B(i,pos,j)*(1 - alpha)
+  endfor
+  vmin=min(vgraph) & vmax=max(vgraph)
+  bmin=min(bgraph) & bmax=max(bgraph)
+  plot, bgraph(ibeg:iend,0), vgraph(ibeg:iend,0), psym=5, xrange=[bmin,bmax], $
+    yrange=[vmin,vmax]
+  oplot, bgraph(ibeg:iend,1), vgraph(ibeg:iend,1), psym=6
+  oplot, bgraph(ibeg:iend,2), vgraph(ibeg:iend,2), psym=7
+  lfit=poly_fit(bgraph,vgraph,1,yfit)
+  oplot, bgraph, yfit
+endif
+;------------------------------------------------------------------------------
+; Quality of fit estimate -- d/d0 ratio
+
+numer = 0. & denom = 0.
+for i=ibeg,iend do begin
+  xprod0=(V(i,pos,1)-vht(1))*B(i,pos,2) - B(i,pos,1)*(V(i,pos,2)-vht(2))
+  xprod1=-(V(i,pos,2)-vht(2))*B(i,pos,0) + B(i,pos,2)*(V(i,pos,0)-vht(0))
+  xprod2=(V(i,pos,0)-vht(0))*B(i,pos,1) - B(i,pos,0)*(V(i,pos,1)-vht(1))
+  dotprod=(xprod0)^2 + (xprod1)^2 + (xprod2)^2
+  numer=dotprod + numer
+  c0=V(i,pos,1)*B(i,pos,2) - B(i,pos,1)*V(i,pos,2)
+  c1=-V(i,pos,2)*B(i,pos,0) + B(i,pos,2)*V(i,pos,0)
+  c2=V(i,pos,0)*B(i,pos,1) - B(i,pos,0)*V(i,pos,1)
+  dotprod1=(c0)^2 + (c1)^2 + (c2)^2
+  denom=dotprod1 + denom
+endfor
+dd=(1./ndata)*numer
+dd0=(1./ndata)*denom
+epsilon=dd/dd0
+epsilon=epsilon(0)
+print, ''
+print, ''
+print, ''
+print, epsilon
+set_plot, 'tek'
+
+print, 'Run for another satellite position?'
+read, again
+endwhile
+
+
+end

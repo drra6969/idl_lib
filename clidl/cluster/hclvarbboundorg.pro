@@ -1,0 +1,169 @@
+Pro hclvarbbound, tvmin,tvmax,withps,smo,eb1,eb2,eb3,ee1,ee2,ee3,strnn,$
+                  absmin,absmax
+
+COMMON test, timeqs,nnn,neqs,veqs,bave
+
+COMMON sc, naux,time,sccoor,scvel,scdr1,scdr2,scdr3,scdr4,gsegsm,diptild, $
+           re, rsc,dxsc,dysc,dzsc,volsc,volrat
+
+  print, 'Variance Analysis for the Time Range:', tvmin, tvmax
+  print, '  Number of data points:', nnn
+ 
+
+
+
+
+; SATELLITE LOCATIONS
+
+hindbd,absmin,absmax,naux,time,its,ite
+
+dscmin=min([scdr1(*,its:ite),scdr2(*,its:ite),scdr3(*,its:ite),$
+           scdr4(*,its:ite)]) & dscmax=max([scdr1(*,its:ite),$
+           scdr2(*,its:ite),scdr3(*,its:ite),scdr4(*,its:ite)]) 
+
+
+
+;plotcoordinates for B line plots
+    dpx=0.41  & dpy=0.17
+    xab=0.545 & xeb=xab+dpx 
+    ylo1=0.58 & yup1=ylo1+dpy
+    ylo2=ylo1-dpy & yup2=ylo1
+    ylo3=ylo2-dpy & yup3=ylo2
+    ylo4=ylo3-dpy & yup4=ylo3
+
+;plotcoordinates for P line plots
+    dpx=0.41  & dpy=0.17
+    xap=0.055 & xep=xap+dpx 
+    ylo0=0.75 & yup0=ylo0+dpy
+    ylo1=ylo0-dpy & yup1=ylo0
+    ylo2=ylo1-dpy & yup2=ylo1
+    ylo3=ylo2-dpy & yup3=ylo2
+    ylo4=ylo3-dpy & yup4=ylo3
+
+
+
+
+!P.POSITION=[0.1,0.1,0.9,0.9]
+plot_3dbox,scdr1(0,its:ite),scdr1(1,its:ite),scdr1(2,its:ite),$
+   /XY_PLANE, /YZ_PLANE, /XZ_PLANE, $
+   /SOLID_WALLS, GRIDSTYLE=1, XYSTYLE=3, XZSTYLE=4, $
+   YZSTYLE=5, AZ=40, TITLE='Boundary normals', $
+   XTITLE='X ', YTITLE='Y ', $
+   ZTITLE='Z ', SUBTITLE='', $
+   /YSTYLE, ZRANGE=[dscmin,dscmax], XRANGE=[dscmin,dscmax],$
+   PSYM=-4, CHARSIZE=1.6,/noerase
+
+plot_3dbox,scdr2(0,its:ite),scdr2(1,its:ite),scdr2(2,its:ite),$
+   /XY_PLANE, /YZ_PLANE, /XZ_PLANE, $
+   /SOLID_WALLS, GRIDSTYLE=1, XYSTYLE=3, XZSTYLE=4, $
+   YZSTYLE=5, AZ=40, TITLE='Boundary normals', $
+   XTITLE='X ', YTITLE='Y ', $
+   ZTITLE='Z ', SUBTITLE='', $
+   /YSTYLE, ZRANGE=[dscmin,dscmax], XRANGE=[dscmin,dscmax],$
+   PSYM=-4, CHARSIZE=1.6,/noerase
+
+plot_3dbox,scdr3(0,its:ite),scdr3(1,its:ite),scdr3(2,its:ite),$
+   /XY_PLANE, /YZ_PLANE, /XZ_PLANE, $
+   /SOLID_WALLS, GRIDSTYLE=1, XYSTYLE=3, XZSTYLE=4, $
+   YZSTYLE=5, AZ=40, TITLE='Boundary normals', $
+   XTITLE='X ', YTITLE='Y ', $
+   ZTITLE='Z ', SUBTITLE='', $
+   /YSTYLE, ZRANGE=[dscmin,dscmax], XRANGE=[dscmin,dscmax],$
+   PSYM=-4, CHARSIZE=1.6,/noerase
+
+plot_3dbox,scdr4(0,its:ite),scdr4(1,its:ite),scdr4(2,its:ite),$
+   /XY_PLANE, /YZ_PLANE, /XZ_PLANE, $
+   /SOLID_WALLS, GRIDSTYLE=1, XYSTYLE=3, XZSTYLE=4, $
+   YZSTYLE=5, AZ=40, TITLE='Boundary normals', $
+   XTITLE='X ', YTITLE='Y ', $
+   ZTITLE='Z ', SUBTITLE='', $
+   /YSTYLE, ZRANGE=[dscmin,dscmax], XRANGE=[dscmin,dscmax],$
+   PSYM=-4, CHARSIZE=1.6,/noerase
+
+   bxv=fltarr(nnn) & byv=bxv & bzv=bxv
+   bxv(*)=bave(0,*) & byv(*)=bave(1,*) & bzv(*)=bave(2,*)
+   vxv=fltarr(nnn) & vyv=bxv & vzv=bxv
+   vxv(*)=veqs(0,*) & vyv(*)=veqs(1,*) & vzv(*)=veqs(2,*)
+   efieldeqs, vxv,vyv,vzv, bxv,byv,bzv, exv,eyv,ezv
+   if smo eq 'y' then begin
+         vxv=smooth(vxv,3) & vyv=smooth(vyv,3) & vzv=smooth(vzv,3)
+         bxv=smooth(vxv,3) & byv=smooth(vyv,3) & bzv=smooth(vzv,3)         
+   endif
+   
+   varmat,nnn,bxv,byv,bzv,bav,bmat
+   eigen, bmat,ef1,ef2,ef3,ewf
+   sorteigenb, ef1,ef2,ef3
+   eb1=ef1 & eb2=ef2 & eb3=ef3
+   ebst='B' 
+
+   !P.CHARSIZE=1.0
+   !P.FONT=0
+   !P.CHARTHICK=1.
+   ps1=[.06, .55, .32, .9]
+   ps2=[.40, .55, .66, .9]
+   post=0.93  & dpo=0.55
+
+   xtit1='j!dB!n'& xtit2='k!dB!n' & ytit='i!dB!n'
+   titl='Magnetic Field Variance'
+   ft=bave 
+   ft(0,*)=bave(0,*)*ef1(0)+bave(1,*)*ef1(1)+bave(2,*)*ef1(2)
+   ft(1,*)=bave(0,*)*ef2(0)+bave(1,*)*ef2(1)+bave(2,*)*ef2(2)
+   ft(2,*)=bave(0,*)*ef3(0)+bave(1,*)*ef3(1)+bave(2,*)*ef3(2)
+
+   low=fltarr(3) & high=low 
+   for i=0,2 do   low(i)=min(ft(i,*))
+   for i=0,2 do   high(i)=max(ft(i,*))
+   dif=0.5*(high-low)  & aver=0.5*(high+low)  & diff=1.02*max(dif)
+   bot0=aver(0)-diff & top0=aver(0)+diff
+   bot1=aver(1)-diff & top1=aver(1)+diff
+   bot2=aver(2)-diff & top2=aver(2)+diff
+
+   A=findgen(17)*(!pi*2/16)
+   usersym, cos(A), sin(A)
+
+
+;plot_3dbox,[0,ef3(0)],[0,ef3(1)],[0,ef3(2)],$
+
+
+; ELECTRIC FIELD
+
+   vxv=fltarr(nnn) & vyv=bxv & vzv=bxv
+   vxv(*)=veqs(0,*) & vyv(*)=veqs(1,*) & vzv(*)=veqs(2,*)
+   efieldeqs, vxv,vyv,vzv, bxv,byv,bzv, exv,eyv,ezv
+
+   varmat,nnn,exv,eyv,ezv,eav,emat
+   eigen, emat,ef1,ef2,ef3,ewf
+   print
+   sorteigenb, ef1,ef2,ef3
+   ee1=ef1 & ee2=ef2 & ee3=ef3
+   ebst='E' 
+
+   !P.CHARSIZE=1.0
+   !P.FONT=0
+   !P.CHARTHICK=1.
+     ps1=[.06, 0.05, .32, .4]
+     ps2=[.40, 0.05, .66, .4]
+     post=0.43  & dpo=0.05
+
+   xtit1='j!dE!n'& xtit2='k!dE!n' & ytit='i!dE!n'
+   titl='Electric Field Variance'
+   ee=fltarr(3,nnn) 
+   ee(0,*)=exv(*) & ee(1,*)=eyv(*) & ee(2,*)=ezv(*) 
+   ft=ee
+   ft(0,*)=ee(0,*)*ef1(0)+ee(1,*)*ef1(1)+ee(2,*)*ef1(2)
+   ft(1,*)=ee(0,*)*ef2(0)+ee(1,*)*ef2(1)+ee(2,*)*ef2(2)
+   ft(2,*)=ee(0,*)*ef3(0)+ee(1,*)*ef3(1)+ee(2,*)*ef3(2)
+
+   low=fltarr(3) & high=low 
+   for i=0,2 do   low(i)=min(ft(i,*))
+   for i=0,2 do   high(i)=max(ft(i,*))
+   dif=0.5*(high-low)  & aver=0.5*(high+low)  & diff=1.02*max(dif)
+   bot0=aver(0)-diff & top0=aver(0)+diff
+   bot1=aver(1)-diff & top1=aver(1)+diff
+   bot2=aver(2)-diff & top2=aver(2)+diff
+
+   A=findgen(17)*(!pi*2/16)
+   usersym, cos(A), sin(A)
+  
+return
+end

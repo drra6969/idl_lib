@@ -1,0 +1,18 @@
+  formdate='(i5, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2,'+$
+        'a3, i5, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2,'+$
+        'a3, i5, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2,'+$
+        'a3, i5, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2, a1, i2.2)'
+
+  for i=0,20 do begin
+    CDF_EPOCH, timem1(i), yr1, mo1, dy1, hr1, mn1, sc1, milli1, /BREAK
+    CDF_EPOCH, timem2(i), yr2, mo2, dy2, hr2, mn2, sc2, milli1, /BREAK
+    CDF_EPOCH, timem3(i), yr3, mo3, dy3, hr3, mn3, sc3, milli1, /BREAK
+    CDF_EPOCH, timem4(i), yr4, mo4, dy4, hr4, mn4, sc4, milli1, /BREAK
+    print, yr1,'/', mo1, '/', dy1, '/', hr1, ':',  mn1, ':', sc1, $
+     ' ! ',yr2,'/', mo2, '/', dy2, '/', hr2, ':',  mn2, ':', sc2, $
+     ' ! ',yr3,'/', mo3, '/', dy3, '/', hr3, ':',  mn3, ':', sc3, $
+     ' ! ',yr4,'/', mo4, '/', dy4, '/', hr4, ':',  mn4, ':', sc4, $
+                   form=formdate
+;     print,timem1(i+1)-timem1(i)
+  endfor
+  print,'Size b1',size(b1)

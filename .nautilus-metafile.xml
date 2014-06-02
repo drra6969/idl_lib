@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<directory>
+  <file name="cluster" default_component="OAFIID:nautilus_file_manager_list_view:521e489d-0662-4ad7-ac3a-832deabe111c"/>
+  <file name="idlstart" window_geometry="800x550+8+8"/>
+  <file name="mdiag" default_component="OAFIID:nautilus_file_manager_list_view:521e489d-0662-4ad7-ac3a-832deabe111c"/>
+</directory>

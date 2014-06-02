@@ -1,0 +1,48 @@
+This directory contains programs for plotting three-dimensional data.
+In detail the contents is:
+
+ byy3.pro
+   hodogram plot??
+
+ col3new appears to be the most recent ploting routine
+
+
+
+ cut3.pro
+ cut3arc.pro
+   Plotting routines for plotting 3D data. Contain contour, surface 
+   
+   repsentations for scalar fields and arrow plots for vector fields.
+   data is read from unformatted. cut3d uses orginal geometry of the 
+
+   input data; cut3arc exchanges y and z directions for ionospheric 
+   geometry. Attention when dealing with prseudovectors like current 
+   or electric field vector. The routine ought to be tested for proper
+   operation. Problems also arise with postscript device. 
+ plotvol.pro
+   Routine for three-dimensional represention of volume data. 
+
+   Input is unformatted. plotvol
+   makes use of the idl program SLICER or the programs SLOWN (derived
+   from slicer (with the possibility of postscript output) or PLOT3D
+   (with the possibilities of postsript and animation. Subroutines
+   reside in ~/idl_lib/routines.   
+ pot.pro
+ potarc.pro
+   Routine for for plotting the output of pot.f, a fortran programm
+   which determines the field aligned electric potential difference 
+   for field lines which originate from a rectangular grid in the
+   simulation box. Input is formatted. structure is otherwise close to 
+   cut3.
+ div
+   defcol.dl
+     hints for color table definitions for postscript output
+   demo3d.pro
+     demonstrates and test routines used for three-dimensional data
+     display. 
+   f2b.f
+   rin
+   velovect.pro
+
+
+ d3.pro and d33.pro - last 3d plot routines used for magnetotail simulations

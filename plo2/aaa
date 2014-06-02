@@ -1,0 +1,47 @@
+Programs to plot data from two-dimensional simulations. In detail the 
+properties are:
+
+  conew.pro
+    Main routines (and most advanced so far) to plot 2D data. Input is
+    unformatted. Routine generates contour plots, arrow plots for 
+    vector fields and surface plots. arrow and contour plots can be 
+    overlayed. Program makes use of subroutine VECT.PRO in 
+    ~/idl_lib/routines.
+  con.pro
+    Version used for KH. Similar to conew, no identifcation of sim vs plot 
+          
+    coordinates
+  conkh.pro
+    Version used for KH. vz_sim,bz_sim etc.
+  conio.pro
+    for ionosphere-magnetosphere coupling.
+  conrek.pro
+    Same as conew but plots separatrix better (if x line at boundary).
+  conres.pro
+    Same as conew but plot resistivity in addition.
+  cotail.pro
+    Some version for tail geometry.
+  conf.pro
+    Old version of conew. Major difference is the formatted read.
+  prof.pro
+    Generates cuts through multiple two-dimensional dataset to 
+    illustrate the evolution of particular properties
+
+
+  coldon.pro 
+   Program to plot kh simulation results (collaboration with Don
+   Fairfield) for rotated coordinates sim(x,y) -> plot(y,-x) +
+   rotation of the simulation (y,z) coordinates by an angle alpha.
+  msprek.pro
+   Similar to coldon but different routine vecpot1
+   to compute the vectorpotential and default angle alpha=0.
+  mspkh.pro
+   Similar to msprek.pro but without the change sim(x,y) -> plot(y,-x).
+   Are vector components like By, Bz correct? Different routine vecpot1
+   to compute the vectorpotential.
+  colrek.pro
+  Various changes compared to coldon: 
+   sim(x,y) -> plot(x,-z) which requires to plot x pointing to the
+   right. Change in no and type of plots. No plot of the projection
+   of the magnetic field bz and velocity vz back to msp coordinates. 
+   

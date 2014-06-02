@@ -1,0 +1,126 @@
+***************************************
+*Explanations for modified program:
+*            hrclbound2.pro
+***************************************
+
+Data: /whatc3/katalindau/hr07/0703
+
+-hrclbound.pro calculates satellite trajectories
+(yell=sc2,red=sc4,white=sc1) in relative coordinates with respect to sc3
+(green) and plots boundary normals on the satellite flight path.
+
+-In menu of hrclbound.pro, the i) defines which satellite data is used to
+define intervals satisfying tests defined in m) and b)
+
+-bn) defines whether the minimum variance of B or the maximum variance of E
+is used to define boundary normal direction
+
+-b) defines how much (range value 0.0-1.0) the magnetic field must vary
+before the interval is picked
+
+modified subroutines used by hrclbound.pro:
+
+hclwalendhtbound.pro(calculates satellite trajectories in relative
+coordinates, tests for change in b), which has a modified subroutine
+hclvarbbound1a.pro for normal calculation and drawing.
+
+USE:
+
+-run hrclbound.pro
+
+-define time t)
+
+-define B change b)
+
+-define test m)
+
+-define space craft for analysis i)
+
+-define time period and increment for search u)
+
+-define method used for boundary normal drawing bn)
+
+-start search s)
+
+option st) is of no use in hrclbound.pro
+
+--------------------------------------------
+-hrclbound2.pro  calculates satellite trajectories of the satellite 
+defined in menu with st) and plots boundary normals on the satellite 
+flight path.
+
+-In menu of hrclbound2.pro, the i) defines which satellite data is used to 
+define intervals satisfying tests defined in m) and b)
+
+-bn) defines whether the minimum variance of B or the maximum variance of E
+is used to define boundary normal direction
+
+-b) defines how much (range value 0.0-1.0) the magnetic field must vary
+before the interval is picked
+
+
+-st) defines which satellite trajectory is used
+
+modified subroutines used by hrclbound2.pro:
+
+hclwalendhtbound2.pro, which has a modified subroutine hclvarbbound2a.pro for
+normal calculation and drawing.
+
+USE:
+
+-run hrclbound2.pro
+
+-define time t)
+
+-define B change b)
+
+-define test m)
+
+-define space craft for analysis i)
+
+-define time period and increment for search u)
+
+-define method used for boundary normal drawing bn)
+
+-define staellite trajectory st)
+
+-start search s)
+
+-------------------------------
+ADDITIONAL COMMENTS
+_______________________________________________ 
+
+-at the moment if a new search is done 
+without terminating the program, it does NOT ERASE the previous path
+
+-after the search the satellite locations in the original overview plot
+are messed up
+
+-postscript generation
+
+-in plot_3dbox,scdr3(0,its:ite),scdr3(1,its:ite),scdr3(2,its:ite),$
+   /XY_PLANE, /YZ_PLANE, /XZ_PLANE, $
+   GRIDSTYLE=1, XYSTYLE=3, XZSTYLE=4, $
+   YZSTYLE=5, AZ=40, TITLE='Boundary normals', $
+   XTITLE='X ', YTITLE='Y ', $
+   ZTITLE='Z ', SUBTITLE='', $
+   /YSTYLE, $
+   XRANGE=[dscmin2,dscmax2],YRANGE=[dscmin2,dscmax2],$
+   ZRANGE=[dscmin2,dscmax2],$
+   PSYM=-4, CHARSIZE=1.6,/noerase,color=green
+
+AZ is defining the view angle, this could be made a parameter in menu.
+
+
+-if very short intervals (u: 0.25 0.05) satisfying m) tests are used in 
+boundary normal calculations, it might be a good idea to be able to expand
+these intervals for normal calculations with certain % and make this a parameter in menu 
+
+
+-draw approximate magnetospheric boundaries in 3-D box of satellite flight 
+paths
+
+
+-do same thing as with normals but with tangents to the boundary, more options n menu
+
+-draw  de Hoffman-Teller frmae velocity vectors in 3-D box

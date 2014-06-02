@@ -1,0 +1,15 @@
+ # License Number(s): 1619-1 
+SERVER where.gi.alaska.edu 000ea65ce148 1700
+USE_SERVER
+DAEMON idl_lmgrd
+INCREMENT idl_mpeg idl_lmgrd 7.000 1-jan-0000 3 CDB8E1E647A4B5FE1699 \
+        VENDOR_STRING="1619-1Space Physics Group" ck=12
+INCREMENT idl_wavelet idl_lmgrd 7.000 1-jan-0000 3 \
+        DD78F1D687C4145769D7 VENDOR_STRING="1619-1Space Physics Group" \
+        ck=36
+INCREMENT idl_bridge_assist idl_lmgrd 7.000 1-jan-0000 3 \
+        DDC851E6E22A8523430F VENDOR_STRING="1619-1Space Physics Group" \
+        ck=34
+INCREMENT idl idl_lmgrd 7.000 1-jan-0000 18 5DF87196A47C0948AD54 \
+        VENDOR_STRING="1619-1Space Physics Group" ck=19
+FEATURESET idl_lmgrd 9E8537A8C1C37CFE

@@ -1,0 +1,161 @@
+
+; Eigenvector angles from LMN, XYZ, solar wind magnetic field
+PRO ANGLES, PHILM, INIT, EVEC, VALS, DIRS
+  q=fltarr(3,3) & rad=q & deg=q
+  u=fltarr(3) & theta=u & zang=u & zcomp=u & yang=u & ycomp=u & zdeg=u & ydeg=u
+    evB=u
+  mx=vals(0) & int=vals(1) & mn=vals(2)
+  maxdir=dirs(0) & intdir=dirs(1) & mindir=dirs(2)
+  phideg=(180*philm)/!pi
+  Bwind=(init(0)^2 + init(1)^2 + init(2)^2)^0.5
+  for k=0,2 do begin
+    if (init(0) ge 0. and init(1) ge 0.) then begin
+      if (evec(1,k) ge 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi
+      if (evec(1,k) lt 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi - 180
+    endif
+    if (init(0) lt 0. and init(1) gt 0.) then begin
+      if (evec(0,k) le 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi
+      if (evec(0,k) gt 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi - 180
+    endif
+    if (init(0) le 0. and init(1) le 0.) then begin
+      if (evec(1,k) le 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi
+      if (evec(1,k) gt 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi - 180
+    endif
+    if (init(0) gt 0. and init(1) lt 0.) then begin
+      if (evec(0,k) ge 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi
+      if (evec(0,k) lt 0.) then evB(k)=(Acos((evec(0,k)*init(0) + $
+        evec(1,k)*init(1) + evec(2,k)*init(2))/Bwind))*180/!pi - 180
+    endif
+  endfor
+
+  for k=0,2 do begin
+    if (evec(1,k) ge 0.) then rad(0,k)=Acos(evec(0,k))
+    if (evec(1,k) lt 0.) then rad(0,k)=-Acos(evec(0,k))
+    if (evec(2,k) ge 0.) then rad(1,k)=Acos(evec(1,k))
+    if (evec(2,k) lt 0.) then rad(1,k)=-Acos(evec(1,k))      
+    if (evec(0,k) ge 0.) then rad(2,k)=Acos(evec(2,k))
+    if (evec(0,k) lt 0.) then rad(2,k)=-Acos(evec(2,k))      
+    deg=(180.*rad)/!Pi
+
+    if (init(1) ge 0.) then begin
+      zcomp(k)=cos(philm)*evec(0,k) - sin(philm)*evec(1,k)
+      ycomp(k)=-sin(philm)*evec(0,k) - cos(philm)*evec(1,k)
+      if (evec(0,k) ge 0. and evec(1,l) ge 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (!pi/2 - philm)) then begin
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) lt 0. and evec(1,k) gt 0.) then begin
+        theta(k)=!pi + Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (!pi - philm)) then begin
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) le 0. and evec(1,k) le 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k)) - !pi
+        if (theta(k) le (-!pi/2 - philm)) then begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) gt 0. and evec(1,k) lt 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (-philm)) then begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endelse
+      endif  
+      evB(k)=(Acos((evec(0,k)*init(0) + evec(1,k)*init(1) + $
+        evec(2,k)*init(2))/Bwind))*180/!pi
+    endif
+
+    if (init(1) lt 0.) then begin      
+      zcomp(k)=cos(philm)*evec(0,k) - sin(philm)*evec(1,k)
+      ycomp(k)=sin(philm)*evec(0,k) - cos (philm)*evec(1,k)
+      if (evec(0,k) ge 0. and evec(1,k) ge 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le philm) then begin 
+          zang(k)=-(Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) lt 0. and evec(1,k) gt 0.) then begin
+        theta(k)=!pi + Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (!pi/2 + philm)) then begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) le 0. and evec(1,k) le 0.) then begin
+        theta(k)=-!pi + Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (-!pi + philm)) then begin
+          zang(k)=(Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(-Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) gt 0. and evec(1,k) lt 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (-!pi/2 + philm)) then begin
+          zang(k)=(-Acos(zcomp(k)))*180/!pi
+          yang(k)=(-Acos(ycomp(k)))*180/!pi
+        endif else begin
+          zang(k)=(-Acos(zcomp(k)))*180/!pi
+          yang(k)=(Acos(ycomp(k)))*180/!pi
+        endelse
+      endif
+      evB(k)=(Acos((evec(0,k)*init(0) + evec(1,k)*init(1) + $
+        evec(2,k)*init(2))/Bwind))*180/!pi
+    endif
+  endfor
+
+  print, 'Maximum eigenvector (eigenvalue = ', mx, ') makes an angle of '
+  print, deg(0,maxdir), deg(1,maxdir), deg(2,maxdir), '  degrees'
+  print, deg(2,maxdir), yang(maxdir), zang(maxdir), '  degrees'
+  print, 'Intermediate eigenvector (eigenvalue = ', int, ') makes an angle of '
+  print, deg(0,intdir), deg(1,intdir), deg(2,intdir), '  degrees'
+  print, deg(2,intdir), yang(intdir), zang(intdir), '  degrees'
+  print, 'Minimum eigenvector (eigenvalue = ', mn, ') makes an angle of '
+  print, deg(0,mindir), deg(1,mindir), deg(2,mindir), '  degrees'
+  print, deg(2,mindir), yang(mindir), zang(mindir), '  degrees'
+  print, 'with the L,M,N & X,Y,Z axes respectively.'
+  print, 'Solar wind magnetic field makes an angle of '
+  print, evB(maxdir),evB(intdir),evB(mindir), '  degrees'
+  print, 'with the maximum, intermediate, and minimum eigenvectors', $
+    ' respectively.'
+  print, 'Maximum, intermediate, and minimum eigenvectors:'
+  print, evec(*,maxdir), evec(*,intdir), evec(*,mindir)
+  print, 'max eval/int eval = ', mx/int
+  print, 'int eval/min eval = ', int/mn
+  return
+  end

@@ -1,0 +1,27 @@
+pro load_mycolor
+;
+; load colortable 22 with black lines instead of red ones...
+;
+if not !d.flags/256 then !p.color=!d.n_colors-1  ; for PostScript
+black=0
+white=255
+loadct, 22
+gamma_ct, 0.65       ; stretch the colortable a bit - it looks nicer!
+tvlct, r, g, b, /get
+
+n=!p.color
+r(n)=black           ; set the last entry in the color table to black
+b(n)=black
+g(n)=black
+r(0)=white           ; set the first entry in the color table to white
+b(0)=white
+g(0)=white
+tvlct, r, g, b
+
+return
+end
+
+~
+~
+~
+~

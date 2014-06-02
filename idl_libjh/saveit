@@ -1,0 +1,40 @@
+; Hodograms - current sheet crossing
+
+PRO CHODOGRAMS, IBEG, IEND, POS, X, EVEC, MAXDIR, MINDIR
+r = fltarr(3,251) & proj0=r & proj1=r & proj2=r & add=r
+intdir = 0 
+xmark = fltarr(10) & ymark=fltarr(10)
+for i=ibeg, iend do $
+  for k=0,2 do begin
+    proj0(k,i)=X(i,pos,0)*evec(0,k)
+    proj1(k,i)=X(i,pos,1)*evec(1,k)
+    proj2(k,i)=X(i,pos,2)*evec(2,k)
+    add(k,i)=proj0(k,i)+proj1(k,i)+proj2(k,i)
+endfor
+for j=0,2 do begin
+  if (maxdir eq j or mindir eq j) then intdir = (j+1) mod 3
+  if (intdir eq maxdir or intdir eq mindir) then intdir = (j+2) mod 3
+endfor 
+low1=min(add(mindir,ibeg:iend))
+high1=max(add(mindir,ibeg:iend))
+low2=min(add(intdir,ibeg:iend))
+high2=max(add(intdir,ibeg:iend))
+lowmax=min(add(maxdir,ibeg:iend))
+highmax=max(add(maxdir,ibeg:iend))
+diffmax=(highmax-lowmax)/2
+avg1=(high1-low1)/2 + low1
+avg2=(high2-low2)/2 + low2
+top1=avg1+diffmax & bot1=avg1-diffmax
+top2=avg2+diffmax & bot2=avg2-diffmax
+plot, add(intdir, ibeg:iend), add(maxdir, ibeg:iend), $
+  psym=1,  xtitle='int', ytitle='max'
+oplot, add(intdir, ibeg:iend), add(maxdir, ibeg:iend)
+xyouts, [add(intdir,ibeg), add(intdir,iend)], [add(maxdir,ibeg), $
+  add(maxdir,iend)], ['t=0', 't=final']
+plot, add(mindir,ibeg:iend), add(maxdir,ibeg:iend), $
+ psym=1, xtitle='min', ytitle='max'
+oplot, add(mindir,ibeg:iend), add(maxdir,ibeg:iend)
+xyouts, [add(mindir,ibeg), add(mindir,iend)], [add(maxdir,ibeg), $
+  add(maxdir,iend)], ['t=0', 't=final']
+return
+end

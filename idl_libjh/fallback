@@ -1,0 +1,27 @@
+if (xmark(1) ne 0) and (ymark(1) ne 0) then begin
+  if (pt eq 0) then xyouts, [xmark(1) - .75*(xmark(1)-xmark(0))], $
+    [ymark(1) - .75*(ymark(1)-ymark(0))], ['B']
+  if (pt eq 1) then xyouts, [xmark(1) - .75*(xmark(1)-xmark(0))], $
+    [ymark(1) - .75*(ymark(1)-ymark(0))], ['E']
+  if (pt eq 2) then xyouts, [xmark(1) - .75*(xmark(1)-xmark(0))], $
+    [ymark(1) - .75*(ymark(1)-ymark(0))], ['Eht']
+endif else begin
+  if (pt eq 0) then xyouts, [.25*xmark(0)], [.25*ymark(0)], ['B']
+  if (pt eq 1) then xyouts, [.25*xmark(0)], [.25*ymark(0)], ['E']  
+  if (pt eq 2) then xyouts, [.25*xmark(0)], [.25*ymark(0)], ['Eht']  
+endelse
+
+
+
+if (xmark(1) ne 0) and (ymark(1) ne 0) then begin
+  if (pt eq 0) then xyouts, [xmark(1) - .5*(xmark(1)-xmark(0))], $
+    [ymark(1) - .5*(ymark(1)-ymark(0))], ['B']
+  if (pt eq 1) then xyouts, [xmark(1) - .5*(xmark(1)-xmark(0))], $
+    [ymark(1) - .5*(ymark(1)-ymark(0))], ['E']
+  if (pt eq 2) then xyouts, [xmark(1) - .5*(xmark(1)-xmark(0))], $
+    [ymark(1) - .5*(ymark(1)-ymark(0))], ['Eht']
+endif else begin
+  if (pt eq 0) then xyouts, [.5*xmark(0)], [.5*ymark(0)], ['B']
+  if (pt eq 1) then xyouts, [.5*xmark(0)], [.5*ymark(0)], ['E']  
+  if (pt eq 2) then xyouts, [.5*xmark(0)], [.5*ymark(0)], ['Eht']  
+endelse

@@ -1,0 +1,45 @@
+    if (init(1) ge 0.) then begin
+      zcomp(k)=cos(philm)*evec(0,k) - sin(philm)*evec(1,k)
+      ycomp(k)=-sin(philm)*evec(0,k) - cos(philm)*evec(1,k)
+      if (evec(0,k) ge 0. and evec(1,l) ge 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (!pi/2 - philm)) then begin
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) lt 0. and evec(1,k) gt 0.) then begin
+        theta(k)=!pi + Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (!pi - philm))
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) le 0. and evec(1,k) le 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k)) - !pi
+        if (theta(k) le (-!pi/2 - philm)) then begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=-Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endelse
+      endif
+      if (evec(0,k) gt 0. and evec(1,k) lt 0.) then begin
+        theta(k)=Atan(evec(1,k)/evec(0,k))
+        if (theta(k) le (-philm)) then begin
+          zang(k)=-Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endif else begin
+          zang(k)=Acos(zcomp(k))*180/!pi
+          yang(k)=Acos(ycomp(k))*180/!pi
+        endelse
+      endif  
+
+

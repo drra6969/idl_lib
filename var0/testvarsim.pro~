@@ -1,0 +1,33 @@
+Pro testvarsim,itot,tmin,tmax,smo,iterror
+;determine variable for dHT and Walen tests
+
+COMMON procommon, nsat,startime,itot,pi,ntmax, $
+                  rhobd,pbd,vxbd,vybd,vzbd,bxbd,bybd,bzbd, $
+                  xsi,ysi,zsi,vxsi,vysi,vzsi, $
+                  time,bxs,bys,bzs,vxs,vys,vzs,rhos,ps,bs,ptots, $
+                  jxs,jys,jzs,xs,ys,zs,cutalong
+COMMON ref, br,vr,rhor,pr,babr,ptotr,pbr,tempr,beta,t,$
+            jr,er,rsat,vrsat,index,starttime,xtit,withps,$
+            satchoice,withunits
+COMMON test, timeqs,nnn,neqs,veqs,bave
+
+  neqs=rohr & veqs=vr & bave=br 
+  num=itot 
+  
+  intbd,tmin,tmax,itot,time,its,ite
+  
+  if (ite-its lt 3) then begin 
+    print, 'Not enough data to test in the interval!!!'
+    iterror='y'
+    return
+  endif 
+  nnn=ite-its+1
+  timeqs=time(its:ite) 
+  bave=bave(*,its:ite) &  neqs=neqs(its:ite) & veqs=veqs(*,its:ite) 
+    
+  print,'Data Interval with n=',nnn
+  print,'  in tmin=',tmin,'  and tmax=',tmax
+  iterror='n'
+
+ return
+end
